@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="batery-manager:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/batery_manager_jar</output-path>
+    <root id="archive" name="batery-manager.jar">
+      <element id="module-output" name="batery-manager" />
+    </root>
+  </artifact>
+</component>
