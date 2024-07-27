@@ -13,7 +13,7 @@ public class ViewMain extends JFrame {
     public static int LIMIT_TIME = 5;//5 seconds
 
     private ViewMain() {
-        super("Battery Manager 1.1");
+        super("Battery Manager 1.1-Linux");
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setSize(350, 450);

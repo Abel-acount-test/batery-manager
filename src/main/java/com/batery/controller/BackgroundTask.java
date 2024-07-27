@@ -3,13 +3,13 @@ package com.batery.controller;
 import com.batery.view.ViewCenterConfig;
 import com.batery.view.ViewMain;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class BackgroundTask implements Runnable {
     private static BackgroundTask instance;
+    private int batteryPercentage;
     private BackgroundTask() {}
     public static BackgroundTask getInstance() {
         if (instance == null) {
@@ -51,7 +51,27 @@ public class BackgroundTask implements Runnable {
         }
         return -1;
     }
-    private boolean isCharging() {
+    private int getBatteryInfoUbuntu() {
+        try {
+            ProcessBuilder builder = new ProcessBuilder("bash", "-c", "upower -i $(upower -e | grep 'BAT') | grep 'percentage' | awk '{print $2}' | sed 's/%//'");
+            builder.redirectErrorStream(true);
+            Process process = builder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                try {
+                    return Integer.parseInt(line.trim());
+                } catch (NumberFormatException e) {
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private boolean isChargingWindows() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", "wmic path Win32_Battery get BatteryStatus");
             Process process = processBuilder.start();
@@ -73,15 +93,33 @@ public class BackgroundTask implements Runnable {
         return false;
     }
 
+    private boolean isChargingUbuntu() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "upower -i $(upower -e | grep 'BAT') | grep 'state' | awk '{print $2}'");
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    return line.equalsIgnoreCase("charging");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     private void actionBattery() throws Exception{
-        if(getBatteryInfoWindows() != -1 && getBatteryInfoWindows() >= ViewMain.LIMIT_BATTERY){
+        batteryPercentage=getBatteryInfoUbuntu();
+        if(batteryPercentage != -1 && batteryPercentage >= ViewMain.LIMIT_BATTERY){
             ViewMain.getInstance().viewFrame();
             MusicController.getInstance().play(1);
-            ViewMain.LIMIT_BATTERY=3+getBatteryInfoWindows();
+            ViewMain.LIMIT_BATTERY=3+batteryPercentage;
             ViewCenterConfig.getInstance().spinnerBattery.setValue(ViewMain.LIMIT_BATTERY);
         }
-        if(!isCharging()){
+        if(!isChargingUbuntu()){
             MusicController.getInstance().pause();
             ViewMain.getInstance().closeFrame();
         }

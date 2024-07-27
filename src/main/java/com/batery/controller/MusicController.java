@@ -1,5 +1,6 @@
 package com.batery.controller;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
@@ -43,13 +44,21 @@ public class MusicController {
         executeSong(file);
     }
     private void executeSong(File file) throws Exception {
-        clip = AudioSystem.getClip();
+        //Windows
+        /*clip = AudioSystem.getClip();
         clip.open(AudioSystem.getAudioInputStream(file));
+        clip.start();*/
+        //ubuntu
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+        clip = AudioSystem.getClip();
+        clip.open(audioInputStream);
         clip.start();
     }
     public void pause() {
-        clip.stop();
-        clip.close();
+        if (clip!=null) {
+            clip.stop();
+            clip.close();
+        }
     }
 
     private File createTemporalFile(String urlResource) throws Exception {
@@ -87,4 +96,8 @@ public class MusicController {
 
         }
     }*/
+
+    public static void main(String[] args) throws Exception {
+        MusicController.getInstance().pause();
+    }
 }
