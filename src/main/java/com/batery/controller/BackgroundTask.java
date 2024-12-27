@@ -115,12 +115,12 @@ public class BackgroundTask implements Runnable {
         batteryPercentage=getBatteryInfoUbuntu();
         if(batteryPercentage != -1 && batteryPercentage >= ViewMain.LIMIT_BATTERY){
             ViewMain.getInstance().viewFrame();
-            MusicController.getInstance().play(1);
+            //MusicController.getInstance().play(1);
             ViewMain.LIMIT_BATTERY=3+batteryPercentage;
             ViewCenterConfig.getInstance().spinnerBattery.setValue(ViewMain.LIMIT_BATTERY);
         }
         if(!isChargingUbuntu()){
-            MusicController.getInstance().pause();
+            //MusicController.getInstance().pause();
             ViewMain.getInstance().closeFrame();
         }
     }
