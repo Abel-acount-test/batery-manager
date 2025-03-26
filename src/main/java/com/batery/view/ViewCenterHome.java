@@ -1,14 +1,19 @@
 package com.batery.view;
 
+import com.batery.utils.other.BatteryUtils;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class ViewCenterHome extends JPanel {
     private static ViewCenterHome instance;
 
     private ViewCenterHome() {
         setOpaque(true);
-        setBackground(Color.RED);
+        setBackground(BatteryUtils.colorByBattery());
+    }
+
+    public void updateColor(){
+        setBackground(BatteryUtils.colorByBattery());
     }
     public static ViewCenterHome getInstance() {
         if (instance == null) {
